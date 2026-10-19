@@ -6,6 +6,9 @@ import java.time.LocalDate;
 
 /**
  * Ejemplo de @Positive, @Future y @Valid (validacion en cascada del objeto anidado).
+ * java -jar target\tema4-0.0.1-SNAPSHOT.jar --server.port=8089
+ * poniendo este comando en la carpeta C:\Workspaces\TrabajoSistemas\tema4\tema4 e inicia la app
+ * http://localhost:8089/videojuegos.html
  */
 public class CitaDTO {
 
