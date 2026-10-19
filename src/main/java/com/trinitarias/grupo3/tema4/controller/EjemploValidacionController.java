@@ -19,7 +19,6 @@ import java.util.TreeSet;
 @RequestMapping("/ejemplos")
 public class EjemploValidacionController {
 
-    /** Resultado de validar un caso de ejemplo. */
     public record Caso(String anotacion, String descripcion, boolean valido, Set<String> errores) {
     }
 
@@ -29,16 +28,12 @@ public class EjemploValidacionController {
         this.validator = validator;
     }
 
-    /**
-     * @Valid en el parametro: Spring valida el body antes de entrar al metodo.
-     * Si hay errores, ValidacionHandler responde 400 con el detalle por campo.
-     */
+    
     @PostMapping("/citas")
     public ResponseEntity<CitaDTO> crearCita(@Valid @RequestBody CitaDTO cita) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cita);
     }
 
-    /** Ejecuta casos que funcionan y casos que fallan, para cada anotacion. */
     @GetMapping("/demo")
     public List<Caso> demo() {
         return ejecutarCasos();
@@ -121,14 +116,12 @@ public class EjemploValidacionController {
         return new Caso(anotacion, descripcion, errores.isEmpty(), errores);
     }
 
-    /** Paciente completamente valido que cada caso modifica en un solo campo. */
     private static PacienteDTO paciente(java.util.function.Consumer<PacienteDTO> cambio) {
         PacienteDTO p = new PacienteDTO("Maria", "Mari", 30, "maria@gmail.com", LocalDate.of(1995, 3, 10));
         cambio.accept(p);
         return p;
     }
 
-    /** Cita completamente valida que cada caso modifica en un solo campo. */
     private static CitaDTO cita(java.util.function.Consumer<CitaDTO> cambio) {
         CitaDTO c = new CitaDTO(45, LocalDate.now().plusDays(3), paciente(p -> { }));
         cambio.accept(c);

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registro de Videojuegos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b1a;
+    --panel: #14142b;
+    --panel-2: #1b1b3a;
+    --border: #2c2c58;
+    --text: #e8e8ff;
+    --muted: #9a9ac4;
+    --accent: #8b5cf6;
+    --accent-2: #22d3ee;
+    --ok: #34d399;
+    --error: #ff5c7a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(circle at 15% 10%, rgba(139,92,246,.25), transparent 40%),
+      radial-gradient(circle at 85% 30%, rgba(34,211,238,.18), transparent 40%),
+      var(--bg);
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 16px 64px; }
+  header { text-align: center; margin-bottom: 28px; }
+  h1 {
+    font-family: 'Orbitron', 'Segoe UI', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    margin: 0 0 6px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    letter-spacing: 1px;
+  }
+  header p { margin: 0; color: var(--muted); }
+  .layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+
+  .card {
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.45), 0 0 0 1px rgba(139,92,246,.08) inset;
+  }
+  .card h2 { font-family: 'Orbitron', sans-serif; font-size: 1.05rem; margin: 0 0 18px; color: var(--accent-2); letter-spacing: .5px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 18px; }
+  .full { grid-column: 1 / -1; }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+
+  .section-title { grid-column: 1 / -1; margin: 6px 0 -4px; font-size: .75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); }
+
+  label { display: block; font-size: .85rem; font-weight: 500; margin-bottom: 6px; color: var(--muted); }
+  label small { color: #6c6c99; font-weight: 400; }
+  input, select {
+    width: 100%;
+    padding: 11px 12px;
+    font: inherit;
+    color: var(--text);
+    background: #0f0f24;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    color-scheme: dark;
+  }
+  input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139,92,246,.25); }
+  .field.invalid input, .field.invalid select { border-color: var(--error); box-shadow: 0 0 0 3px rgba(255,92,122,.15); }
+  .error { min-height: 0; margin-top: 6px; font-size: .8rem; color: var(--error); display: none; }
+  .field.invalid .error { display: block; }
+  .field.invalid .error::before { content: '⚠ '; }
+
+  .actions { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+  button {
+    font: inherit; font-weight: 600; cursor: pointer; border: 0; border-radius: 10px; padding: 12px 22px;
+    transition: transform .1s, filter .15s;
+  }
+  button:active { transform: translateY(1px); }
+  .primary { color: #fff; background: linear-gradient(90deg, var(--accent), #6366f1 60%, var(--accent-2)); box-shadow: 0 6px 20px rgba(139,92,246,.4); }
+  .primary:hover { filter: brightness(1.1); }
+  .secondary { color: var(--muted); background: transparent; border: 1.5px solid var(--border); }
+  .secondary:hover { color: var(--text); border-color: var(--muted); }
+  button:disabled { opacity: .6; cursor: wait; }
+
+  .banner { display: none; margin-bottom: 18px; padding: 12px 14px; border-radius: 10px; font-size: .9rem; }
+  .banner.show { display: block; }
+  .banner.ok { background: rgba(52,211,153,.12); border: 1px solid var(--ok); color: var(--ok); }
+  .banner.bad { background: rgba(255,92,122,.12); border: 1px solid var(--error); color: var(--error); }
+
+  .games { display: grid; gap: 12px; }
+  .empty { color: var(--muted); text-align: center; padding: 28px 8px; border: 1.5px dashed var(--border); border-radius: 12px; }
+  .game { background: #0f0f24; border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; position: relative; overflow: hidden; }
+  .game::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px; background: linear-gradient(var(--accent), var(--accent-2)); }
+  .game h3 { margin: 0 0 6px; font-size: 1.02rem; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .tag { font-size: .72rem; padding: 3px 9px; border-radius: 999px; background: rgba(139,92,246,.18); color: #c4b5fd; }
+  .tag.cyan { background: rgba(34,211,238,.15); color: #67e8f9; }
+  .tag.pegi { background: rgba(255,92,122,.15); color: #ff9bb0; }
+  .game p { margin: 2px 0; font-size: .82rem; color: var(--muted); }
+  .rating { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; color: var(--ok); position: absolute; top: 12px; right: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🎮 REGISTRO DE VIDEOJUEGOS</h1>
+    <p>Añade un juego a la biblioteca. Los datos se validan en el servidor y no se aceptan si algo es incorrecto.</p>
+  </header>
+
+  <div class="layout">
+    <section class="card">
+      <h2>NUEVO JUEGO</h2>
+      <div id="banner" class="banner" role="status"></div>
+
+      <form id="form" novalidate>
+        <div class="grid">
+          <div class="section-title">Datos del juego</div>
+
+          <div class="field full">
+            <label for="titulo">Título <small>(2–50 caracteres, no vacío)</small></label>
+            <input id="titulo" name="titulo" type="text" placeholder="Ej: The Legend of Zelda">
+            <div class="error" data-error="titulo"></div>
+          </div>
+
+          <div class="field">
+            <label for="genero">Género</label>
+            <select id="genero" name="genero">
+              <option value="">— Elige —</option>
+              <option>Acción</option><option>Aventura</option><option>RPG</option>
+              <option>Deportes</option><option>Estrategia</option><option>Terror</option>
+              <option>Plataformas</option><option>Simulación</option>
+            </select>
+            <div class="error" data-error="genero"></div>
+          </div>
+
+          <div class="field">
+            <label for="plataforma">Plataforma</label>
+            <select id="plataforma" name="plataforma">
+              <option value="">— Elige —</option>
+              <option>PC</option><option>PlayStation 5</option><option>Xbox Series</option>
+              <option>Nintendo Switch</option><option>Móvil</option>
+            </select>
+            <div class="error" data-error="plataforma"></div>
+          </div>
+
+          <div class="field">
+            <label for="precio">Precio (€) <small>(mayor que 0)</small></label>
+            <input id="precio" name="precio" type="number" step="0.01" placeholder="59.99">
+            <div class="error" data-error="precio"></div>
+          </div>
+
+          <div class="field">
+            <label for="pegi">Edad mínima PEGI <small>(3–18)</small></label>
+            <input id="pegi" name="pegi" type="number" placeholder="12">
+            <div class="error" data-error="pegi"></div>
+          </div>
+
+          <div class="field">
+            <label for="valoracion">Valoración <small>(0–10)</small></label>
+            <input id="valoracion" name="valoracion" type="number" placeholder="9">
+            <div class="error" data-error="valoracion"></div>
+          </div>
+
+          <div class="field">
+            <label for="fechaLanzamiento">Fecha de lanzamiento <small>(pasada)</small></label>
+            <input id="fechaLanzamiento" name="fechaLanzamiento" type="date">
+            <div class="error" data-error="fechaLanzamiento"></div>
+          </div>
+
+          <div class="field full">
+            <label for="fechaProximoDlc">Próximo DLC <small>(opcional; si lo pones, debe ser futura)</small></label>
+            <input id="fechaProximoDlc" name="fechaProximoDlc" type="date">
+            <div class="error" data-error="fechaProximoDlc"></div>
+          </div>
+
+          <div class="section-title">Contacto de quien lo registra</div>
+
+          <div class="field">
+            <label for="contacto.nombre">Nombre <small>(3–30 caracteres)</small></label>
+            <input id="contacto.nombre" name="contacto.nombre" type="text" placeholder="Tu nombre">
+            <div class="error" data-error="contacto.nombre"></div>
+          </div>
+
+          <div class="field">
+            <label for="contacto.email">Email</label>
+            <input id="contacto.email" name="contacto.email" type="text" placeholder="usuario@gmail.com">
+            <div class="error" data-error="contacto.email"></div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" type="submit" id="enviar">Guardar juego</button>
+          <button class="secondary" type="button" id="limpiar">Limpiar</button>
+        </div>
+      </form>
+    </section>
+
+    <aside class="card">
+      <h2>BIBLIOTECA (<span id="contador">0</span>)</h2>
+      <div id="lista" class="games"></div>
+    </aside>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById('form');
+  const banner = document.getElementById('banner');
+  const lista = document.getElementById('lista');
+  const campos = [...form.elements].filter(e => e.name);
+
+  function valor(el) {
+    const v = el.value;
+    if (el.type === 'number') return v === '' ? null : Number(v);
+    if (el.tagName === 'SELECT' || el.type === 'date') return v === '' ? null : v;
+    return v; // texto: se envía tal cual (así "   " también lo rechaza @NotBlank)
+  }
+
+  function construirJson() {
+    const body = { contacto: {} };
+    for (const el of campos) {
+      if (el.name.startsWith('contacto.')) body.contacto[el.name.slice(9)] = valor(el);
+      else body[el.name] = valor(el);
+    }
+    return body;
+  }
+
+  function limpiarErrores() {
+    document.querySelectorAll('.field.invalid').forEach(f => f.classList.remove('invalid'));
+    banner.className = 'banner';
+  }
+
+  function mostrarErrores(errores) {
+    let sinCampo = [];
+    for (const [campo, mensaje] of Object.entries(errores)) {
+      const caja = document.querySelector(`[data-error="${CSS.escape(campo)}"]`);
+      if (caja) {
+        caja.textContent = mensaje;
+        caja.closest('.field').classList.add('invalid');
+      } else {
+        sinCampo.push(mensaje);
+      }
+    }
+    banner.className = 'banner show bad';
+    banner.textContent = sinCampo.length
+      ? sinCampo.join(' · ')
+      : 'No se ha guardado: corrige los campos marcados en rojo.';
+    const primero = document.querySelector('.field.invalid input, .field.invalid select');
+    if (primero) primero.focus();
+  }
+
+  function tarjeta(j) {
+    const d = document.createElement('div');
+    d.className = 'game';
+    const r = document.createElement('div'); r.className = 'rating'; r.textContent = j.valoracion + '/10';
+    const h = document.createElement('h3'); h.textContent = j.titulo;
+    const m = document.createElement('div'); m.className = 'meta';
+    [[j.genero, ''], [j.plataforma, 'cyan'], ['PEGI ' + j.pegi, 'pegi']].forEach(([t, c]) => {
+      const s = document.createElement('span'); s.className = 'tag ' + c; s.textContent = t; m.appendChild(s);
+    });
+    const p1 = document.createElement('p');
+    p1.textContent = `${Number(j.precio).toFixed(2)} € · Lanzado el ${j.fechaLanzamiento}`;
+    const p2 = document.createElement('p');
+    p2.textContent = j.fechaProximoDlc ? `Próximo DLC: ${j.fechaProximoDlc}` : 'Sin DLC previsto';
+    const p3 = document.createElement('p');
+    p3.textContent = `Registrado por ${j.contacto.nombre} (${j.contacto.email})`;
+    d.append(r, h, m, p1, p2, p3);
+    return d;
+  }
+
+  async function cargarLista() {
+    const res = await fetch('/api/videojuegos');
+    const juegos = await res.json();
+    document.getElementById('contador').textContent = juegos.length;
+    lista.replaceChildren();
+    if (!juegos.length) {
+      const e = document.createElement('div'); e.className = 'empty';
+      e.textContent = 'Aún no hay juegos. ¡Registra el primero!';
+      lista.appendChild(e);
+      return;
+    }
+    juegos.slice().reverse().forEach(j => lista.appendChild(tarjeta(j)));
+  }
+
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    limpiarErrores();
+    const btn = document.getElementById('enviar');
+    btn.disabled = true;
+    try {
+      const res = await fetch('/api/videojuegos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(construirJson())
+      });
+      if (res.status === 201) {
+        form.reset();
+        banner.className = 'banner show ok';
+        banner.textContent = '✔ Juego guardado correctamente.';
+        await cargarLista();
+      } else if (res.status === 400) {
+        const data = await res.json();
+        mostrarErrores(data.errores || {});
+      } else {
+        banner.className = 'banner show bad';
+        banner.textContent = 'Error inesperado del servidor (' + res.status + ').';
+      }
+    } catch (e) {
+      banner.className = 'banner show bad';
+      banner.textContent = 'No se pudo conectar con el servidor.';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('limpiar').addEventListener('click', () => { form.reset(); limpiarErrores(); });
+
+  // Al escribir en un campo, se quita su error
+  form.addEventListener('input', (ev) => ev.target.closest('.field')?.classList.remove('invalid'));
+  form.addEventListener('change', (ev) => ev.target.closest('.field')?.classList.remove('invalid'));
+
+  cargarLista();
+</script>
+</body>
+</html>

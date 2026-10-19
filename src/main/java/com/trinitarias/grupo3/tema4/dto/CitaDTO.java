@@ -9,16 +9,12 @@ import java.time.LocalDate;
  */
 public class CitaDTO {
 
-    // @Positive: numero mayor que 0
     @Positive(message = "La duracion debe ser mayor que 0")
     private int duracionMinutos;
 
-    // @Future: la fecha de la cita debe ser posterior a hoy
     @Future(message = "La fecha de la cita debe estar en el futuro")
     private LocalDate fechaCita;
 
-    // @Valid: hace que tambien se comprueben las validaciones de PacienteDTO
-    // @NotNull: sin el, un paciente null se saltaria la validacion en cascada
     @NotNull(message = "El paciente es obligatorio")
     @Valid
     private PacienteDTO paciente;
