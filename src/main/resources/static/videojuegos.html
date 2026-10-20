@@ -30,7 +30,7 @@
       radial-gradient(circle at 85% 30%, rgba(34,211,238,.18), transparent 40%),
       var(--bg);
   }
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 16px 64px; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 16px 64px; position: relative; }
   header { text-align: center; margin-bottom: 28px; }
   h1 {
     font-family: 'Orbitron', 'Segoe UI', sans-serif;
@@ -41,6 +41,15 @@
     letter-spacing: 1px;
   }
   header p { margin: 0; color: var(--muted); }
+
+  .lang { display: flex; justify-content: flex-end; gap: 6px; margin-bottom: 10px; }
+  .lang button {
+    padding: 6px 14px; font-size: .8rem; letter-spacing: 1px; color: var(--muted);
+    background: transparent; border: 1.5px solid var(--border); border-radius: 999px;
+  }
+  .lang button:hover { color: var(--text); border-color: var(--muted); }
+  .lang button.active { color: #fff; border-color: transparent; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+
   .layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; align-items: start; }
   @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
 
@@ -51,7 +60,7 @@
     padding: 24px;
     box-shadow: 0 10px 40px rgba(0,0,0,.45), 0 0 0 1px rgba(139,92,246,.08) inset;
   }
-  .card h2 { font-family: 'Orbitron', sans-serif; font-size: 1.05rem; margin: 0 0 18px; color: var(--accent-2); letter-spacing: .5px; }
+  .card h2 { font-family: 'Orbitron', sans-serif; font-size: 1.05rem; margin: 0 0 18px; color: var(--accent-2); letter-spacing: .5px; text-transform: uppercase; }
 
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 18px; }
   .full { grid-column: 1 / -1; }
@@ -111,117 +120,215 @@
 </head>
 <body>
 <div class="wrap">
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-lang="es">ES</button>
+    <button type="button" data-lang="en">EN</button>
+  </div>
+
   <header>
-    <h1>🎮 REGISTRO DE VIDEOJUEGOS</h1>
-    <p>Añade un juego a la biblioteca. Los datos se validan en el servidor y no se aceptan si algo es incorrecto.</p>
+    <h1 data-i18n="title"></h1>
+    <p data-i18n="subtitle"></p>
   </header>
 
   <div class="layout">
     <section class="card">
-      <h2>NUEVO JUEGO</h2>
+      <h2 data-i18n="newGame"></h2>
       <div id="banner" class="banner" role="status"></div>
 
       <form id="form" novalidate>
         <div class="grid">
-          <div class="section-title">Datos del juego</div>
+          <div class="section-title" data-i18n="gameData"></div>
 
           <div class="field full">
-            <label for="titulo">Título <small>(2–50 caracteres, no vacío)</small></label>
-            <input id="titulo" name="titulo" type="text" placeholder="Ej: The Legend of Zelda">
+            <label for="titulo"><span data-i18n="l.titulo"></span> <small data-i18n="h.titulo"></small></label>
+            <input id="titulo" name="titulo" type="text" data-i18n-ph="p.titulo">
             <div class="error" data-error="titulo"></div>
           </div>
 
           <div class="field">
-            <label for="genero">Género</label>
+            <label for="genero" data-i18n="l.genero"></label>
             <select id="genero" name="genero">
-              <option value="">— Elige —</option>
-              <option>Acción</option><option>Aventura</option><option>RPG</option>
-              <option>Deportes</option><option>Estrategia</option><option>Terror</option>
-              <option>Plataformas</option><option>Simulación</option>
+              <option value="" data-i18n="choose"></option>
+              <option value="Acción" data-i18n="g.Acción"></option>
+              <option value="Aventura" data-i18n="g.Aventura"></option>
+              <option value="RPG" data-i18n="g.RPG"></option>
+              <option value="Deportes" data-i18n="g.Deportes"></option>
+              <option value="Estrategia" data-i18n="g.Estrategia"></option>
+              <option value="Terror" data-i18n="g.Terror"></option>
+              <option value="Plataformas" data-i18n="g.Plataformas"></option>
+              <option value="Simulación" data-i18n="g.Simulación"></option>
             </select>
             <div class="error" data-error="genero"></div>
           </div>
 
           <div class="field">
-            <label for="plataforma">Plataforma</label>
+            <label for="plataforma" data-i18n="l.plataforma"></label>
             <select id="plataforma" name="plataforma">
-              <option value="">— Elige —</option>
-              <option>PC</option><option>PlayStation 5</option><option>Xbox Series</option>
-              <option>Nintendo Switch</option><option>Móvil</option>
+              <option value="" data-i18n="choose"></option>
+              <option value="PC" data-i18n="g.PC"></option>
+              <option value="PlayStation 5" data-i18n="g.PlayStation 5"></option>
+              <option value="Xbox Series" data-i18n="g.Xbox Series"></option>
+              <option value="Nintendo Switch" data-i18n="g.Nintendo Switch"></option>
+              <option value="Móvil" data-i18n="g.Móvil"></option>
             </select>
             <div class="error" data-error="plataforma"></div>
           </div>
 
           <div class="field">
-            <label for="precio">Precio (€) <small>(mayor que 0)</small></label>
+            <label for="precio"><span data-i18n="l.precio"></span> <small data-i18n="h.precio"></small></label>
             <input id="precio" name="precio" type="number" step="0.01" placeholder="59.99">
             <div class="error" data-error="precio"></div>
           </div>
 
           <div class="field">
-            <label for="pegi">Edad mínima PEGI <small>(3–18)</small></label>
+            <label for="pegi"><span data-i18n="l.pegi"></span> <small data-i18n="h.pegi"></small></label>
             <input id="pegi" name="pegi" type="number" placeholder="12">
             <div class="error" data-error="pegi"></div>
           </div>
 
           <div class="field">
-            <label for="valoracion">Valoración <small>(0–10)</small></label>
+            <label for="valoracion"><span data-i18n="l.valoracion"></span> <small data-i18n="h.valoracion"></small></label>
             <input id="valoracion" name="valoracion" type="number" placeholder="9">
             <div class="error" data-error="valoracion"></div>
           </div>
 
           <div class="field">
-            <label for="fechaLanzamiento">Fecha de lanzamiento <small>(pasada)</small></label>
+            <label for="fechaLanzamiento"><span data-i18n="l.fechaLanzamiento"></span> <small data-i18n="h.fechaLanzamiento"></small></label>
             <input id="fechaLanzamiento" name="fechaLanzamiento" type="date">
             <div class="error" data-error="fechaLanzamiento"></div>
           </div>
 
           <div class="field full">
-            <label for="fechaProximoDlc">Próximo DLC <small>(opcional; si lo pones, debe ser futura)</small></label>
+            <label for="fechaProximoDlc"><span data-i18n="l.fechaProximoDlc"></span> <small data-i18n="h.fechaProximoDlc"></small></label>
             <input id="fechaProximoDlc" name="fechaProximoDlc" type="date">
             <div class="error" data-error="fechaProximoDlc"></div>
           </div>
 
-          <div class="section-title">Contacto de quien lo registra</div>
+          <div class="section-title" data-i18n="contactData"></div>
 
           <div class="field">
-            <label for="contacto.nombre">Nombre <small>(3–30 caracteres)</small></label>
-            <input id="contacto.nombre" name="contacto.nombre" type="text" placeholder="Tu nombre">
+            <label for="contacto.nombre"><span data-i18n="l.cnombre"></span> <small data-i18n="h.cnombre"></small></label>
+            <input id="contacto.nombre" name="contacto.nombre" type="text" data-i18n-ph="p.cnombre">
             <div class="error" data-error="contacto.nombre"></div>
           </div>
 
           <div class="field">
-            <label for="contacto.email">Email</label>
+            <label for="contacto.email" data-i18n="l.cemail"></label>
             <input id="contacto.email" name="contacto.email" type="text" placeholder="usuario@gmail.com">
             <div class="error" data-error="contacto.email"></div>
           </div>
         </div>
 
         <div class="actions">
-          <button class="primary" type="submit" id="enviar">Guardar juego</button>
-          <button class="secondary" type="button" id="limpiar">Limpiar</button>
+          <button class="primary" type="submit" id="enviar" data-i18n="save"></button>
+          <button class="secondary" type="button" id="limpiar" data-i18n="clear"></button>
         </div>
       </form>
     </section>
 
     <aside class="card">
-      <h2>BIBLIOTECA (<span id="contador">0</span>)</h2>
+      <h2><span data-i18n="library"></span> (<span id="contador">0</span>)</h2>
       <div id="lista" class="games"></div>
     </aside>
   </div>
 </div>
 
 <script>
+  // ---------- i18n del lado del navegador ----------
+  // Los textos de ERROR vienen ya traducidos del servidor (messages_xx.properties).
+  // Aquí se traducen solo los textos de la propia página.
+  const TEXTOS = {
+    es: {
+      title: '🎮 REGISTRO DE VIDEOJUEGOS',
+      subtitle: 'Añade un juego a la biblioteca. Los datos se validan en el servidor y no se aceptan si algo es incorrecto.',
+      newGame: 'Nuevo juego', library: 'Biblioteca',
+      gameData: 'Datos del juego', contactData: 'Contacto de quien lo registra',
+      'l.titulo': 'Título', 'h.titulo': '(2–50 caracteres, no vacío)', 'p.titulo': 'Ej: The Legend of Zelda',
+      'l.genero': 'Género', 'l.plataforma': 'Plataforma', choose: '— Elige —',
+      'l.precio': 'Precio (€)', 'h.precio': '(mayor que 0)',
+      'l.pegi': 'Edad mínima PEGI', 'h.pegi': '(3–18)',
+      'l.valoracion': 'Valoración', 'h.valoracion': '(0–10)',
+      'l.fechaLanzamiento': 'Fecha de lanzamiento', 'h.fechaLanzamiento': '(pasada)',
+      'l.fechaProximoDlc': 'Próximo DLC', 'h.fechaProximoDlc': '(opcional; si lo pones, debe ser futura)',
+      'l.cnombre': 'Nombre', 'h.cnombre': '(3–30 caracteres)', 'p.cnombre': 'Tu nombre',
+      'l.cemail': 'Email',
+      save: 'Guardar juego', clear: 'Limpiar',
+      ok: '✔ Juego guardado correctamente.',
+      fix: 'No se ha guardado: corrige los campos marcados en rojo.',
+      server: 'Error inesperado del servidor',
+      conn: 'No se pudo conectar con el servidor.',
+      empty: 'Aún no hay juegos. ¡Registra el primero!',
+      released: 'Lanzado el', dlc: 'Próximo DLC:', noDlc: 'Sin DLC previsto', by: 'Registrado por',
+      'g.Acción': 'Acción', 'g.Aventura': 'Aventura', 'g.RPG': 'RPG', 'g.Deportes': 'Deportes',
+      'g.Estrategia': 'Estrategia', 'g.Terror': 'Terror', 'g.Plataformas': 'Plataformas', 'g.Simulación': 'Simulación',
+      'g.PC': 'PC', 'g.PlayStation 5': 'PlayStation 5', 'g.Xbox Series': 'Xbox Series',
+      'g.Nintendo Switch': 'Nintendo Switch', 'g.Móvil': 'Móvil'
+    },
+    en: {
+      title: '🎮 VIDEO GAME REGISTER',
+      subtitle: 'Add a game to the library. Data is validated on the server and rejected if anything is wrong.',
+      newGame: 'New game', library: 'Library',
+      gameData: 'Game details', contactData: 'Contact of the person registering it',
+      'l.titulo': 'Title', 'h.titulo': '(2–50 characters, not blank)', 'p.titulo': 'E.g. The Legend of Zelda',
+      'l.genero': 'Genre', 'l.plataforma': 'Platform', choose: '— Choose —',
+      'l.precio': 'Price (€)', 'h.precio': '(greater than 0)',
+      'l.pegi': 'Minimum age PEGI', 'h.pegi': '(3–18)',
+      'l.valoracion': 'Rating', 'h.valoracion': '(0–10)',
+      'l.fechaLanzamiento': 'Release date', 'h.fechaLanzamiento': '(in the past)',
+      'l.fechaProximoDlc': 'Next DLC', 'h.fechaProximoDlc': '(optional; if filled in, must be in the future)',
+      'l.cnombre': 'Name', 'h.cnombre': '(3–30 characters)', 'p.cnombre': 'Your name',
+      'l.cemail': 'Email',
+      save: 'Save game', clear: 'Clear',
+      ok: '✔ Game saved successfully.',
+      fix: 'Not saved: fix the fields marked in red.',
+      server: 'Unexpected server error',
+      conn: 'Could not connect to the server.',
+      empty: 'No games yet. Register the first one!',
+      released: 'Released on', dlc: 'Next DLC:', noDlc: 'No DLC planned', by: 'Registered by',
+      'g.Acción': 'Action', 'g.Aventura': 'Adventure', 'g.RPG': 'RPG', 'g.Deportes': 'Sports',
+      'g.Estrategia': 'Strategy', 'g.Terror': 'Horror', 'g.Plataformas': 'Platformer', 'g.Simulación': 'Simulation',
+      'g.PC': 'PC', 'g.PlayStation 5': 'PlayStation 5', 'g.Xbox Series': 'Xbox Series',
+      'g.Nintendo Switch': 'Nintendo Switch', 'g.Móvil': 'Mobile'
+    }
+  };
+
+  // Idioma inicial: el elegido antes (localStorage) o, si no hay, el del navegador
+  let idioma = 'es';
+  try { idioma = localStorage.getItem('lang') || ''; } catch (e) { idioma = ''; }
+  if (!TEXTOS[idioma]) idioma = (navigator.language || 'es').toLowerCase().startsWith('en') ? 'en' : 'es';
+
+  const t = (clave) => TEXTOS[idioma][clave] ?? clave;
+  const localeNumeros = () => (idioma === 'en' ? 'en-GB' : 'es-ES');
+
   const form = document.getElementById('form');
   const banner = document.getElementById('banner');
   const lista = document.getElementById('lista');
   const campos = [...form.elements].filter(e => e.name);
 
+  function aplicarIdioma() {
+    document.documentElement.lang = idioma;
+    document.title = idioma === 'en' ? 'Video Game Register' : 'Registro de Videojuegos';
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+    document.querySelectorAll('.lang button').forEach(b => b.classList.toggle('active', b.dataset.lang === idioma));
+  }
+
+  function cambiarIdioma(nuevo) {
+    idioma = nuevo;
+    try { localStorage.setItem('lang', idioma); } catch (e) { /* sin almacenamiento: no pasa nada */ }
+    limpiarErrores(); // los errores mostrados estaban en el idioma anterior
+    aplicarIdioma();
+    cargarLista();
+  }
+
+  // Cabecera que lee el servidor para decidir el idioma de los errores
+  const cabeceras = (extra = {}) => ({ 'Accept-Language': idioma, ...extra });
+
   function valor(el) {
     const v = el.value;
     if (el.type === 'number') return v === '' ? null : Number(v);
     if (el.tagName === 'SELECT' || el.type === 'date') return v === '' ? null : v;
-    return v; // texto: se envía tal cual (así "   " también lo rechaza @NotBlank)
+    return v; // texto: se envía tal cual (así "   " también lo rechaza el validator)
   }
 
   function construirJson() {
@@ -250,9 +357,7 @@
       }
     }
     banner.className = 'banner show bad';
-    banner.textContent = sinCampo.length
-      ? sinCampo.join(' · ')
-      : 'No se ha guardado: corrige los campos marcados en rojo.';
+    banner.textContent = sinCampo.length ? sinCampo.join(' · ') : t('fix');
     const primero = document.querySelector('.field.invalid input, .field.invalid select');
     if (primero) primero.focus();
   }
@@ -263,27 +368,29 @@
     const r = document.createElement('div'); r.className = 'rating'; r.textContent = j.valoracion + '/10';
     const h = document.createElement('h3'); h.textContent = j.titulo;
     const m = document.createElement('div'); m.className = 'meta';
-    [[j.genero, ''], [j.plataforma, 'cyan'], ['PEGI ' + j.pegi, 'pegi']].forEach(([t, c]) => {
-      const s = document.createElement('span'); s.className = 'tag ' + c; s.textContent = t; m.appendChild(s);
+    [[t('g.' + j.genero), ''], [t('g.' + j.plataforma), 'cyan'], ['PEGI ' + j.pegi, 'pegi']].forEach(([txt, c]) => {
+      const s = document.createElement('span'); s.className = 'tag ' + c; s.textContent = txt; m.appendChild(s);
     });
+    const precio = new Intl.NumberFormat(localeNumeros(), { style: 'currency', currency: 'EUR' }).format(j.precio);
+    const fecha = (iso) => new Date(iso + 'T00:00:00').toLocaleDateString(localeNumeros());
     const p1 = document.createElement('p');
-    p1.textContent = `${Number(j.precio).toFixed(2)} € · Lanzado el ${j.fechaLanzamiento}`;
+    p1.textContent = `${precio} · ${t('released')} ${fecha(j.fechaLanzamiento)}`;
     const p2 = document.createElement('p');
-    p2.textContent = j.fechaProximoDlc ? `Próximo DLC: ${j.fechaProximoDlc}` : 'Sin DLC previsto';
+    p2.textContent = j.fechaProximoDlc ? `${t('dlc')} ${fecha(j.fechaProximoDlc)}` : t('noDlc');
     const p3 = document.createElement('p');
-    p3.textContent = `Registrado por ${j.contacto.nombre} (${j.contacto.email})`;
+    p3.textContent = `${t('by')} ${j.contacto.nombre} (${j.contacto.email})`;
     d.append(r, h, m, p1, p2, p3);
     return d;
   }
 
   async function cargarLista() {
-    const res = await fetch('/api/videojuegos');
+    const res = await fetch('/api/videojuegos', { headers: cabeceras() });
     const juegos = await res.json();
     document.getElementById('contador').textContent = juegos.length;
     lista.replaceChildren();
     if (!juegos.length) {
       const e = document.createElement('div'); e.className = 'empty';
-      e.textContent = 'Aún no hay juegos. ¡Registra el primero!';
+      e.textContent = t('empty');
       lista.appendChild(e);
       return;
     }
@@ -298,35 +405,37 @@
     try {
       const res = await fetch('/api/videojuegos', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: cabeceras({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(construirJson())
       });
       if (res.status === 201) {
         form.reset();
         banner.className = 'banner show ok';
-        banner.textContent = '✔ Juego guardado correctamente.';
+        banner.textContent = t('ok');
         await cargarLista();
       } else if (res.status === 400) {
         const data = await res.json();
         mostrarErrores(data.errores || {});
       } else {
         banner.className = 'banner show bad';
-        banner.textContent = 'Error inesperado del servidor (' + res.status + ').';
+        banner.textContent = t('server') + ' (' + res.status + ').';
       }
     } catch (e) {
       banner.className = 'banner show bad';
-      banner.textContent = 'No se pudo conectar con el servidor.';
+      banner.textContent = t('conn');
     } finally {
       btn.disabled = false;
     }
   });
 
   document.getElementById('limpiar').addEventListener('click', () => { form.reset(); limpiarErrores(); });
+  document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => cambiarIdioma(b.dataset.lang)));
 
   // Al escribir en un campo, se quita su error
   form.addEventListener('input', (ev) => ev.target.closest('.field')?.classList.remove('invalid'));
   form.addEventListener('change', (ev) => ev.target.closest('.field')?.classList.remove('invalid'));
 
+  aplicarIdioma();
   cargarLista();
 </script>
 </body>
